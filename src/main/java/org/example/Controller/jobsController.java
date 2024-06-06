@@ -18,7 +18,7 @@ public class jobsController {
      @Context HttpHeaders headers;
 
      @GET
-     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
      public Response SELECT_ALL_jobs(
 //             @QueryParam("min_salary") Double min_salary ,
 //             @QueryParam("limit")  Integer limit ,
@@ -35,6 +35,12 @@ public class jobsController {
                             .type(MediaType.APPLICATION_XML)
                             .build();
                }
+               if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
+                    return Response
+                            .ok(job)
+                            .type("text/csv")
+                            .build();
+               }
                return Response
                        .ok(job, MediaType.APPLICATION_JSON)
                        .build();
@@ -44,16 +50,12 @@ public class jobsController {
      }
      @GET
      @Path("{Job_id}")
+     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})
      public Response SELECT_ONE_id_job(@PathParam("Job_id") int Job_id) {
           try {
                jobs jj =jo.SELECT_ONE_id_job(Job_id);
 //                jo.SELECT_ONE_id_job(Job_id);
-                if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
-                    return Response
-                            .ok(jo)
-                            .type(MediaType.APPLICATION_XML)
-                            .build();
-               }
+
                 jobsDto dto = new jobsDto();
                 dto.setJob_id(jj.getJob_id());
                 dto.setJob_title(jj.getJob_title());
@@ -63,7 +65,18 @@ public class jobsController {
 
 
 
-
+               if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
+                    return Response
+                            .ok(dto)
+                            .type(MediaType.APPLICATION_XML)
+                            .build();
+               }
+               if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
+                    return Response
+                            .ok(dto)
+                            .type("text/csv")
+                            .build();
+               }
                return Response
                        .ok(dto, MediaType.APPLICATION_JSON)
                        .build();
